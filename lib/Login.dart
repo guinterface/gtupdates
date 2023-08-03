@@ -1,4 +1,5 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,7 @@ import 'Inicio.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer';
 import 'dart:convert';
-
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'Pages/Motorista/GeralMotorista.dart';
 
 class Login extends StatefulWidget {
@@ -59,9 +60,12 @@ class _LoginState extends State<Login> {
       usuario.usuario_superintendente = verifica(jsonDecode(data)['usuario_superintendente']);
       usuario.termo = verifica(jsonDecode(data)['termo']);
       usuario.cod_notification = jsonDecode(data)['cod_notification'];
+      usuario.usuario_ou_motorista = _categoriaUsuario;
      // getCorridas(usuario);
       List<String> arguments = [];
       getRaces(arguments, usuario);
+      acharToken(usuario);
+     //_logarUsuario(usuario);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => Inicio(usuario: usuario)),
@@ -106,6 +110,8 @@ class _LoginState extends State<Login> {
       motorista.termo = verifica(dados['termo']);
 
       // getCorridas(usuario);
+      //TODO acharToken(motorista);
+      //_logarUsuario(motorista);
 
      Navigator.pushReplacement(
         context,
@@ -115,6 +121,27 @@ class _LoginState extends State<Login> {
     } else {
       print("${response.statusCode} - Something went wrong..");
     }
+  }
+  acharToken(Usuario _usuario)async{
+    String? deviceToken = await FirebaseMessaging.instance.getToken();
+    print("TOKEN: $deviceToken");
+
+    //var headers = {'Content-Type': 'application/x-www-form-urlencoded'};
+    var url = Uri.parse(
+        'https://obdi.com.br/obdigt/api/usuario/update_cod_notify/${_usuario.id}/${deviceToken}'); // Url of the website where we get the data from.
+    var request = http.Request('GET', url); // Now set our  request to POST
+    //request.headers.addAll(headers);
+    http.StreamedResponse response = await request.send(); // Send request.
+    if (response.statusCode == 200) {
+      dynamic data =
+      await response.stream.bytesToString();
+      print("Conseguimos $data");
+
+
+    } else {
+      print("${response.statusCode} - Something went wrong..");
+    }
+
   }
 
   bool verifica(int booleano){
@@ -198,6 +225,23 @@ if(dadosCorridas.statusCode == 200){
 
 
   }
+  _cadastrarUsuario( Usuario usuario ){
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    auth.createUserWithEmailAndPassword(
+        email: usuario.email,
+        password: usuario.senha
+    ).then((firebaseUser){
+ }).catchError((error){
+      print("erro app: " + error.toString() );
+      setState(() {
+        mensagemErro = "Erro ao cadastrar usuário, verifique os campos e tente novamente!";
+      });
+
+    });
+
+  }
 
   _validarCampos(){
 
@@ -263,6 +307,9 @@ if(dadosCorridas.statusCode == 200){
     FirebaseAuth auth = FirebaseAuth.instance;
     User? usuarioLogado = await auth.currentUser;
     if(usuarioLogado != null){
+      Usuario _usuario = Usuario();
+      _usuario.email = usuarioLogado!.email!;
+      //getDataUsuario(_usuario);
       /*Navigator.push(context, MaterialPageRoute(
           builder: (context) => Inicio(usuario: ,)
 
@@ -369,6 +416,7 @@ if(dadosCorridas.statusCode == 200){
                         usuario.username = _controllerEmail.text;
                         usuario.senha = _controllerSenha.text;
                         getDataUsuario(usuario);
+                        _cadastrarUsuario(usuario);
                         /*
                       User1 user = await createuser();
                       setState(() {

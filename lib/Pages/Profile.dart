@@ -8,7 +8,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:io';
 
 import 'package:untitled/Inicio.dart';
-import 'package:untitled/Pages/Profile/MinhasCorridas.dart';
+import 'package:untitled/Pages/Profile/CorridasFinalizadas.dart';
+import 'package:untitled/Pages/Profile/UltimasCorridas.dart';
 
 import '../Classes/Usuario.dart';
 
@@ -238,7 +239,7 @@ class _ProfileState extends State<Profile> {
                     color: Colors.lightGreenAccent,
                     onPressed: (){
                       Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => MinhasCorridas(usuario: widget.usuario)
+                          builder: (context) => UltimasCorridas(usuario: widget.usuario, categoriaUsuario: "usuario",)
                       ));
                     },
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -260,9 +261,9 @@ class _ProfileState extends State<Profile> {
                     padding: EdgeInsets.all(20),
                     color: Colors.lightGreenAccent,
                     onPressed: (){
-                     /* Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => Inicio()
-                      ));*/
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => CorridasCanceladas(usuario: widget.usuario)
+                      ));
                     },
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                     child: Row(

@@ -38,16 +38,34 @@ _alteraarBotao(){
   if(_boolCorBotao){
     setState(() {
       _corBotao = Colors.lightGreenAccent;
+      //TODO _alterarStatus(1);
       _textoBotao = "Estou disponível";
     });
   }else{
     setState(() {
       _corBotao = Colors.redAccent;
+      //TODO _alterarStatus(0);
       _textoBotao = "Estou Indisponível";
 
     });
   }
 }
+  void _alterarStatus(int _status)async {
+    //var headers = {'Content-Type': 'application/json'};
+    var url = Uri.parse(
+        '  https://obdi.com.br/obdigt/api/motorista/update_status/${widget.motorista.id}/$_status'); // Url of the website where we get the data from.
+    var request = http.Request('GET', url); // Now set our  request to POST
+    //request.headers.addAll(headers);
+    http.StreamedResponse response = await request.send(); // Send request.
+    // Check if response is okay
+    if (response.statusCode == 200) {
+      dynamic data =
+      await response.stream.bytesToString();
+      print(data.toString());
+    }else{
+      print("ERRO");
+    }
+  }
 
 
 
@@ -88,28 +106,7 @@ _alteraarBotao(){
 
 
   }
-  void getRaces(List<String> arguments, Usuario _usuario) async {
-    print("Ate aqui");
-    var url = Uri.parse("https://obdi.com.br/obdigt/api/usuario/ultimas_corridas/${_usuario.id}");
 
-    // You will wait for the response and then decode the JSON string.
-    var response = await http.get(url);
-    print("resposta : $response");
-    if (response.statusCode != 200) {
-      print("${response.statusCode}");
-    } else {
-      var jsonResponse =
-      jsonDecode(response.body);
-      print("jresposta : $jsonResponse");
-
-      print('Number of books about http: ${jsonResponse['travels']}');
-      Stream<List<dynamic>> stream = jsonResponse;
-
-      stream.listen((dados){
-        _controller.add( dados );
-      });
-    }
-  }
   Stream<http.Response> getCorridas(Usuario _usuario) async* {
     yield* Stream.periodic(Duration(seconds: 5), (_) async{
       print("Ate aqui");
@@ -267,7 +264,7 @@ _alteraarBotao(){
 
                                           onTap: (){
                                             Navigator.push(context, MaterialPageRoute(
-                                                builder: (context) => DetalhesCorrida(corrida: corrida,)
+                                                builder: (context) => DetalhesCorrida(corrida: corrida, viagemAtual: true,)
 
                                             ));
                                           },

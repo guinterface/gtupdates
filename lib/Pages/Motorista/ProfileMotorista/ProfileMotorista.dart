@@ -9,7 +9,7 @@ import 'package:untitled/Classes/Usuario.dart';
 import 'dart:io';
 
 import 'package:untitled/Inicio.dart';
-import 'package:untitled/Pages/Profile/MinhasCorridas.dart';
+import 'package:untitled/Pages/Profile/UltimasCorridas.dart';
 
 
 
@@ -239,7 +239,7 @@ class _ProfileMotoristaState extends State<ProfileMotorista> {
                     color: Colors.lightGreenAccent,
                     onPressed: (){
                       Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => MinhasCorridas(usuario: widget.motorista)
+                          builder: (context) => UltimasCorridas(usuario: widget.motorista, categoriaUsuario: "motorista")
                       ));
                     },
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),

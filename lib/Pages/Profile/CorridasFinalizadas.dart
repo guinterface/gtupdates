@@ -10,14 +10,14 @@ import '../../Classes/Usuario.dart';
 import '../DetalhesCorrida.dart';
 
 
-class MinhasCorridas extends StatefulWidget {
+class CorridasCanceladas extends StatefulWidget {
   final Usuario usuario;
-  MinhasCorridas({Key? key, required this.usuario}) : super(key: key);
+  CorridasCanceladas({Key? key, required this.usuario}) : super(key: key);
   @override
-  _MinhasCorridasState createState() => _MinhasCorridasState();
+  _CorridasCanceladasState createState() => _CorridasCanceladasState();
 }
 
-class _MinhasCorridasState extends State<MinhasCorridas> {
+class _CorridasCanceladasState extends State<CorridasCanceladas> {
 
   List<String> itensMenu = [
     "Configurações", "Deslogar"
@@ -63,7 +63,7 @@ class _MinhasCorridasState extends State<MinhasCorridas> {
   }
   void getRaces(List<String> arguments, Usuario _usuario) async {
     print("Ate aqui");
-    var url = Uri.parse("https://obdi.com.br/obdigt/api/usuario/ultimas_corridas/${_usuario.id}");
+    var url = Uri.parse("https://obdi.com.br/obdigt/api/usuario/corridas_finalizadas/${_usuario.id}");
 
     // You will wait for the response and then decode the JSON string.
     var response = await http.get(url);
@@ -92,7 +92,10 @@ class _MinhasCorridasState extends State<MinhasCorridas> {
   Stream<http.Response> getCorridas(Usuario _usuario) async* {
     yield* Stream.periodic(Duration(seconds: 5), (_) async{
       print("Ate aqui");
-      var url = Uri.parse("https://obdi.com.br/obdigt/api/usuario/ultimas_corridas/${_usuario.id}");
+      var url = Uri.parse("https://obdi.com.br/obdigt/api/usuario/corridas_canceladas/${_usuario.id}");
+      if(_usuario.usuario_ou_motorista){
+        url = Uri.parse("https://obdi.com.br/obdigt/api/motorista/corridas_canceladas/${_usuario.id}");
+      }
 
       // You will wait for the response and then decode the JSON string.
       var response = await http.get(url);
@@ -147,7 +150,7 @@ class _MinhasCorridasState extends State<MinhasCorridas> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black87,
-        title: Text("Ultimas Corridas", style: TextStyle(color: Colors.lightGreenAccent),),
+        title: Text("Corridas Canceladas", style: TextStyle(color: Colors.lightGreenAccent),),
         actions: <Widget>[
           PopupMenuButton<String>(
             onSelected: _escolhaMenuItem,
@@ -194,10 +197,10 @@ class _MinhasCorridasState extends State<MinhasCorridas> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(padding: EdgeInsets.only(top: 20, left: 10),
-                            child:Text("Aqui estão suas", style: TextStyle(fontSize: 18),),
+                            child:Text("Essas são suas", style: TextStyle(fontSize: 18),),
                           ),
                           Padding(padding: EdgeInsets.only(top: 0, left: 10),
-                            child: Text("corridas concluídas", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),),
+                            child: Text("corridas canceladas", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),),
                           ),
                           /*Padding(padding: EdgeInsets.only(top: 0, left: 10, bottom: 16),
                             child: Image.asset("bck1/list1.png", width: 230),
@@ -217,15 +220,14 @@ class _MinhasCorridasState extends State<MinhasCorridas> {
                                 Map<String, dynamic> item = requisicoes[ indice ];
 
 
-                                var bairroOrigem = item["bairro_partida"];
-                                var dataCorrida = item["data"];
                                 Corrida corrida = Corrida();
-                                corrida.observacoes = item["observacoes"];
-                                corrida.endereco_destino = item["endereco_destino"];
-                                corrida.endereco_partida = item["endereco_partida"];
-                                corrida.pernoite = verifica(item["pernoite"]);
-                                corrida.data = item["data"];
-                                corrida.hora = item["hora"];
+                                corrida.bairro_partida = item["bairro_partida"] != null? item["bairro_partida"] : "";
+                                corrida.observacoes = item["observacoes"] != null? item["observacoes"] : "";
+                                corrida.endereco_destino = item["endereco_destino"] != null? item["endereco_destino"] : "";
+                                corrida.endereco_partida = item["endereco_partida"] != null? item["endereco_partida"] : "";
+                                corrida.pernoite =  item["pernoite"] != null ? verifica(item["pernoite"]): false;
+                                corrida.data = item["data"]!= null? item["data"] : "";
+                                corrida.hora = item["hora"]!= null? item["hora"] : "";
 
 
 
@@ -235,7 +237,7 @@ class _MinhasCorridasState extends State<MinhasCorridas> {
 
                                     onTap: (){
                                       Navigator.push(context, MaterialPageRoute(
-                                          builder: (context) => DetalhesCorrida(corrida: corrida,)
+                                          builder: (context) => DetalhesCorrida(corrida: corrida, viagemAtual: false,)
 
                                       ));
                                     },
@@ -255,7 +257,7 @@ class _MinhasCorridasState extends State<MinhasCorridas> {
                                                 Padding(padding: EdgeInsets.only(left: 32, right: 32, ), child:
                                                 Column(
                                                   children: [ Text(
-                                                    bairroOrigem,
+                                                    corrida.bairro_partida,
                                                     style: TextStyle(
                                                         fontSize: 18,
                                                         color: Colors.white,
@@ -264,7 +266,7 @@ class _MinhasCorridasState extends State<MinhasCorridas> {
                                                   ),
                                                     Padding(padding: EdgeInsets.only(top: 6),),
                                                     Text(
-                                                      dataCorrida,
+                                                      corrida.data,
                                                       style: TextStyle(
                                                         fontSize: 18,
                                                         color: Colors.lightGreenAccent,

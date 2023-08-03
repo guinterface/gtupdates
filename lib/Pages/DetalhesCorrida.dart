@@ -10,8 +10,9 @@ import '../Classes/Usuario.dart';
 class DetalhesCorrida extends StatefulWidget {
 
   final Corrida corrida;
+  final bool viagemAtual;
 
-  DetalhesCorrida({Key? key, required this.corrida}) : super(key: key);
+  DetalhesCorrida({Key? key, required this.corrida, required this.viagemAtual}) : super(key: key);
 
   @override
 
@@ -134,13 +135,14 @@ class _DetalhesCorridaState extends State<DetalhesCorrida> {
                 paddig("Origem", _origem, Icon(Icons.label)),
                 paddingDate("Data de Partida", _data) ,
                 paddig("Destino", _destino, Icon(Icons.add_location_sharp)),
-                Padding(padding: EdgeInsets.all(8), child:
 
+                Padding(padding: EdgeInsets.all(8), child:
                 Row( mainAxisAlignment: MainAxisAlignment.center, children: [
                   Column(children: [
                     Padding(padding: EdgeInsets.only(bottom: 5), child: Text(
                       "Com Pernoite?",style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey, fontSize: 12),
-                    ),),
+                    ),
+                    ),
                     SizedBox(height: 50, width: 150, child:
                     FlutterSwitch(value: _pernoite, disabled: true, onToggle: (val){
 
@@ -148,6 +150,7 @@ class _DetalhesCorridaState extends State<DetalhesCorrida> {
                     }, showOnOff: true, activeText: "Sim", inactiveText: "Não", activeColor: Colors.lightGreenAccent, width: 100, height: 50, )
                       ,),
                   ],),
+
                   Column(children: [
                     Padding(padding: EdgeInsets.only(bottom: 5), child: Text(
                       "Categoria",style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey, fontSize: 12),
@@ -189,18 +192,21 @@ class _DetalhesCorridaState extends State<DetalhesCorrida> {
                 ),
                 Padding(padding: EdgeInsets.all(5)),
 
+               Visibility(visible: widget.viagemAtual,
+               child: SizedBox(width: 200,
+                 child:  MaterialButton(minWidth: 100, height: 50, color: Colors.black87, onPressed: (){
+                   criarCorrida();
+                 }, child: SizedBox(width: 250, child:
+                 Row( crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center,
+                   children: [
+                     Text("Concluir",
+                       style: TextStyle(color: Colors.lightGreenAccent, fontWeight: FontWeight.bold, fontSize: 22),)
+                   ],
+                 ),) ),
+               ) ,
+               )
 
-                SizedBox(width: 200,
-                  child:  MaterialButton(minWidth: 100, height: 50, color: Colors.black87, onPressed: (){
-                    criarCorrida();
-                  }, child: SizedBox(width: 250, child:
-                  Row( crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Concluir",
-                        style: TextStyle(color: Colors.lightGreenAccent, fontWeight: FontWeight.bold, fontSize: 22),)
-                    ],
-                  ),) ),
-                )
+
 
               ],
 

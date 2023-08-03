@@ -18,7 +18,7 @@ class Usuario {
   bool _usuario_superintendente = false;
   bool _exist = false;
   bool _termo = false;
-
+  bool _usuario_ou_motorista = false;
 
 
 
@@ -45,6 +45,8 @@ class Usuario {
     "usuario_superintendente" : this.usuario_superintendente,
     "exist" : this.exist,
     "termo" : this.termo,
+    "usuario_ou_motorista" : this.usuario_ou_motorista
+
 
 
 
@@ -56,6 +58,11 @@ class Usuario {
   }
 
 
+  bool get usuario_ou_motorista => _usuario_ou_motorista;
+
+  set usuario_ou_motorista(bool value) {
+    _usuario_ou_motorista = value;
+  }
 
   bool get termo => _termo;
 
@@ -222,14 +229,15 @@ class QAItem extends StatelessWidget {
       "motorista_superintendente" : this.motoirsta_superintendente,
       "horario_entrada" : this.horario_entrada,
       "horario_saida": this.horario_saida,
-      "valor_hora_extra": this.valor_hora_extra
+      "valor_hora_extra": this.valor_hora_extra,
+      "usuario_ou_motorista" : this.usuario_ou_motorista
 
 
 
 
 
 
-    };
+  };
     return map;
 
   }
@@ -269,5 +277,62 @@ class QAItem extends StatelessWidget {
 
   set motoirsta_superintendente(bool value) {
     _motoirsta_superintendente = value;
+  }
+}
+
+
+
+
+class Pagamento {
+
+  int _preco = 0;
+  String _tipo_de_pagamento = "";
+  String _categoria_de_pagamento = "";
+  String _observacoes = "";
+
+  Pagamento();
+
+  Map<String, dynamic> toMap() {
+
+
+    Map<String, dynamic> map = {
+      "preco" : this.preco,
+      "tipo_de_pagamento": this.tipo_de_pagamento,
+      "categoria_de_pagamento": this.categoria_de_pagamento,
+      "observacoes":this.observacoes
+
+
+
+
+
+
+
+    };
+    return map;
+
+  }
+
+  String get observacoes => _observacoes;
+
+  set observacoes(String value) {
+    _observacoes = value;
+  }
+
+  String get categoria_de_pagamento => _categoria_de_pagamento;
+
+  set categoria_de_pagamento(String value) {
+    _categoria_de_pagamento = value;
+  }
+
+  String get tipo_de_pagamento => _tipo_de_pagamento;
+
+  set tipo_de_pagamento(String value) {
+    _tipo_de_pagamento = value;
+  }
+
+  int get preco => _preco;
+
+  set preco(int value) {
+    _preco = value;
   }
 }
